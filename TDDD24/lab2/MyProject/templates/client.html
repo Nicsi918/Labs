@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="{{ url_for('static', filename='client.css') }}" type="text/css"/> 
+<script language="javascript" type="text/javascript" src="{{ url_for('static', filename='client.js') }}"></script>
+<script language="javascript" type="text/javascript" src="{{ url_for('static', filename='serverstub.js') }}"></script>
+<title>Twidder</title>
+
+<script type="text/view" id="welcomeView">
+	<div id="logo-container"></div>
+        <div id="login-container">
+        	<form id="login-form" method=post>
+                <br><label for="email">Email:</label>
+                <input class="text-box" type="email" id="email" name="email"/>
+                <br><br><label for ="psw">Password:</label>
+                <input class="text-box" id="psw" type="password" name="password"/><br>
+				<label id="signInStatus"></label>
+                <input class="submit-btn" onclick="signIn()" type="button" name="loginButton" value="Login"/>
+            </form>
+        </div>
+        <div id="signup-container">
+        	<h2 align="center">Signup here!</h1>
+            <form id="signupForm">
+                <label for="fname">First Name:</label>
+                <input class="text-box" onfocus="resetSignupField('fname')" id="fname" type="text" name="fname"><br>
+                <label for="sname">Family Name:</label>
+                <input onfocus="resetBorder('sname')" class="text-box" id="sname" type="text" name="sname"/>
+                <label for="gen">Gender:</label>
+                <select name="gen" id="gen">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+				</select>
+                <br><label for="city">City:</label>
+                <input class="text-box" onfocus="resetSignupField('city')" id="city" type="text" name="city"/>
+                <br><label for="country">Country:</label>
+                <input class="text-box" onfocus="resetSignupField('country')" id="country" type="text" name="country"/>
+                <br><label for="emailSignup">Email:</label>
+                <input class="text-box" onfocus="resetSignupField('emailSignup')" id="emailSignup" type="text" name="emailSignup"/>
+                <br><label for="passwordSignup1">Password:</label>
+                <input class="text-box" onfocus="resetSignupField('passwordSignup1')" id="passwordSignup1" type="password" name="passwordSignup1"/>
+                <br><label for="passwordSignup2">Repeat PSW:</label>
+                <input class="text-box" onfocus="resetSignupField('passwordSignup2')" id="passwordSignup2" type="password" name="passwordSignup2"/><br>
+                <br><label id="signUpStatus"></label>
+				<input class="submit-btn" type="button" name="submitButton" onclick="SignUp()" value="Sign Up"/>
+            </form>
+        </div>;
+</script>
+
+<script type="text/view" id="profileView">
+	<ul id="tabs">
+  		<li class="selected" id="tabHome" onclick="showTab('home', 'tabHome'); loadHome()"><a>Home</a></li>
+  		<li id="tabBrowse" onclick="showTab('browse', 'tabBrowse'); loadBrowse()"><a>Browse</a></li>
+  		<li id="tabAccount" onclick="showTab('account', 'tabAccount')"><a>Account</a></li>
+	</ul>
+	<div class="tabContent" id="home" style="display:block">
+	  	<div class="userInfo-container">
+			<label class="userInfoLabel" id="userInfoLabel-home"></label>
+			<input type="button" id="update-btn" onclick="loadHomeWall()" value="Update"/>
+		</div>
+		<div class="messageWall-container" id="messageWall-home">
+		</div>
+		<div id="postMessage-container">
+			<textarea class="postMessageTextbox" id="postMessageTextbox-home" rows="3" placeholder="Text..."></textarea>
+			<input type="button" id="submit-btn" onclick="postOnOwnWall()" value="POST"/>
+		</div>
+	</div>
+	<div class="tabContent" id="browse">
+	  	<div id="searchBar-container">
+			<input id="SearchBar" placeholder="Type here..." type="text"/>
+			<input type="button" onclick="searchUser()" style="float:right;" value="SEARCH"/>
+		</div>
+		<div class="userInfo-container">
+			<label class="userInfoLabel" id="userInfoLabel-browse"></label>
+			<input type="button" id="update-btn" onclick="loadBrowse()" value="Update"/>
+		</div>
+		<div class="messageWall-container" id="messageWall-browse">
+		</div>
+		<div id="postMessage-container">
+			<textarea class="postMessageTextbox" id="postMessageTextbox-browse" rows="3" placeholder="Text..."></textarea>
+			<input type="button" id="submit-btn" onclick="postOnOtherWall()" value="POST"/>
+		</div>
+	</div>
+	<div class="tabContent" id="account">
+		<form id="AccountForm">
+			<br><label for="oldPwr">Old Password:</label>
+			<input class="text-box" type="password" id="oldPwr"/><br>
+			<label for ="psw">New Password:</label>
+            <input class="text-box" onfocus="resetBorder(\'newPwr1\');resetBorder(\'newPwr2\')" id="newPwr1" type="password"/>
+			<br><label for ="psw">Repeat New Password:</label>
+            <input class="text-box" onfocus="resetBorder(\'newPwr1\');resetBorder(\'newPwr2\')" id="newPwr2" type="password"/><br>
+			<br><label id="changeStatus"></label>
+            <input id="submit-btn" onclick="changePassword()" type="button" value="Change"/>
+			<br><br><input id="submit-btn" onclick="SignOut()" type="button" value="Sign Out"/>
+     	</form>
+	</div>
+</script>
+
+<script type="text/javascript">
+	window.onload=function(){ 
+		document.getElementById("main-container").innerHTML = document.getElementById("welcomeView").innerHTML;
+	};
+</script>
+
+</head>
+
+<body>
+	<div id="main-container">
+		       
+    </div>
+</body>
+</html>

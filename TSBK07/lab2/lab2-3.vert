@@ -5,7 +5,6 @@ in vec3 in_Normal;
 in  vec3 in_Color;
 in vec2 inTexCoord;
 
-
 uniform mat4 projectionMatrix;
 uniform mat4 transMatrix;
 uniform mat4 totMatrix;

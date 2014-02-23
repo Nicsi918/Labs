@@ -7,16 +7,17 @@ in vec2 inTexCoord;
 
 
 uniform mat4 totMatrix;
+uniform mat3 normalMatrix;
 
 out vec3 fragColor;
 out vec2 fragTexCoord;
+out vec3 fragNormal;
 
 
 void main(void)
 {
 	fragTexCoord = inTexCoord;
-	fragColor = vec3(1.0, 0.0, 0.0);
-	//fragColor = vec3(inTexCoord.x + in_Normal.x, inTexCoord.y + in_Normal.y, in_Normal.z);
-	//fragColor = vec3(sin(in_Normal.x), cos(in_Normal.y), sin(in_Normal.z));
+	fragNormal = normalMatrix * in_Normal;
+	fragColor = vec3(1.0, 1.0, 1.0);
 	gl_Position = totMatrix * vec4(in_Position, 1.0);
 }

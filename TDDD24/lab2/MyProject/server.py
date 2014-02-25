@@ -2,9 +2,13 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 import sys
 import database_helper
+import hashlib
+import os,binascii
 
 
 storedToken = "UIHEWFISUHF%/&/)((F/Y/&"
+
+loggedInUsers = {}
 
 @app.route('/')
 def hello_world():
@@ -18,16 +22,16 @@ def hello_world():
 def getUserMessagesByToken():
     email = "nicsi918@student.liu.se" ##mail by token
     token = storedToken ##token
-    getUserMessages(email, token)
+    getUserMessages(email)
 
 @app.route('/getUserMessagesByEmail', methods=['GET'])
 def getUserMessagesByEmail():
     email = "nicsi918@student.liu.se" ##mail by request
     token = storedToken ##token
-    getUserMessages(email, token)
+    getUserMessages(email)
     
 
-def getUserMessages(email, token):
+def getUserMessages(email):
     if (token == storedToken): ##
         dbRet = database_helper.getMessages(email)
         return jsonify(success = True, message = "Returning messages", data = dbRet)
@@ -37,13 +41,14 @@ def getUserMessages(email, token):
 
 
 @app.route('/postMessage', methods=['POST'])
-def postMessage(token, content, toEmail):
-    token = storedToken ##token
-    toEmail = request.form['email']
-    fromEmail = "nicsi918@student.liu.se" ##get email of token
-    message = request.form['message']
+def postMessage():
+    token = request.form['token']
+    if (token in loggedInUsers.keys()):
+        
+        toEmail = request.form['email']
+        fromEmail = loggedInUsers[token] 
+        message = request.form['message']
 
-    if (token == storedToken):
         database_helper.postMessage(toEmail, fromEmail, message)
         return jsonify(success = True, message = "Message posted")
     else:
@@ -52,29 +57,36 @@ def postMessage(token, content, toEmail):
 
 @app.route('/getUserDataByEmail', methods=['GET'])
 def getUserDataByEmail():
-    email = "nicsi918@student.liu.se" ##Searched email
-    token = storedToken ##Token
+    email = request.args.get('email')
+    token = request.args.get('token')
+    if (token in loggedInUsers.keys()):
+        return getUserData(email)
 
 @app.route('/getUserDataByToken', methods=['GET'])
 def getUserDataByToken():
-    email = "nicsi918@student.liu.se" ##Users own email
-    token = storedToken ##Token
-    return getUserData(email, token)
+    token = request.args.get('token')
+    if (token in loggedInUsers.keys()):
+        email = loggedInUsers[token]
+        return getUserData(email)
+    else:
+        return jsonify(success = False, message = "Not logged in")
 
-def getUserData(email, token):
-    if (token == storedToken): ##
-        dbRet = database_helper.getUser(email)
-        print(dbRet)
-        if (dbRet == []):
-            return jsonify(success = False, message = "User does not exist")
-        else:
-            return jsonify(success = True, message = "Got user data", data = dbRet[0])
-                       
+def getUserData(email):
+    dbRet = database_helper.getUser(email)
+    if (dbRet == []):
+        return jsonify(success = False, message = "User does not exist")
+    else:
+        return jsonify(success = True, message = "Got user data", data = dbRet[0])
+                      
 
 @app.route('/signout', methods=['POST'])
 def signOut():
-    ##do something with token
-    return "Signing out not impl"
+    token = request.form['token']
+    if (token in loggedInUsers.keys()):
+        del loggedInUsers[token]
+        return jsonify(success = True, message = "Successfully logged out")
+    else:        
+        return jsonify(success = False, message = "Not logged in")
 
 @app.route('/signup', methods=['POST'])
 def signUp():
@@ -84,7 +96,7 @@ def signUp():
     email = request.form['email']
     city = request.form['city']
     country = request.form['country']
-    password = request.form['password']
+    password = hashlib.sha224(request.form['password']).hexdigest()
 
     dbRet = database_helper.createUser(email, password, firstname, familyname, gender, city, country)
     if (dbRet):
@@ -98,8 +110,7 @@ def signIn():
     email = request.form['email']
     password = request.form['password']
     user = database_helper.getUser(email)
-    print(user[0][1])
-
+    
     success = True
     message = "User is logged in"
     
@@ -108,8 +119,10 @@ def signIn():
         message = "User does not exist"
         return jsonify(message = message, success = success)
     else:
-        if (user[0][1] == password):
-            return jsonify(message = message, success = success, token = storedToken)
+        if (user[0][1] == hashlib.sha224(password).hexdigest()):
+            token = binascii.b2a_hex(os.urandom(15))
+            loggedInUsers[token] = email
+            return jsonify(message = message, success = success, token = token)
         else:
             success = False
             message = "Incorrect password"
@@ -118,24 +131,24 @@ def signIn():
 
 @app.route('/changePassword', methods=['POST'])
 def changePassword():
-    token = storedToken ##
-    oldPassword = request.form['oldPassword']
-
-    return "not done yet"
-
-                       
+    token = request.form['token']
+    oldPassword = hashlib.sha224(request.form['oldPassword']).hexdigest()
+    newPassword = hashlib.sha224(request.form['newPassword']).hexdigest()
+    if (token in loggedInUsers.keys()):
+        dbRet = database_helper.getUser(loggedInUsers[token])
+        if (dbRet == []):
+            return jsonify(success = False, message = "User does not exist")
+        else:
+            email = loggedInUsers[token]
+            dbRet = database_helper.changePassword(email, oldPassword, newPassword)
+            if (dbRet):
+                return jsonify(success = True, message = "Password changed")
+            else:
+                return jsonify(success = False, message = "Incorrect password")
+    else:
+        return jsonify(success = False, message = "Not logged in")                     
                        
     
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-
-
-def changePassword(token, oldPassword, newPassword):
-    pass
-
-#signIn("nicsi918@student.liu.se", "")

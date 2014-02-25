@@ -33,10 +33,7 @@ def getMessages(toEmail):
     cur = c.cursor()
     cur.execute("SELECT * FROM posts WHERE toEmail = (?)", (toEmail,))
     retVal = cur.fetchall()
-
-    print(retVal)
     c.commit()
-
     return retVal
 
 def createUser(email, password, firstname, familyname, gender, city, country):
@@ -58,8 +55,26 @@ def getUser(email):
     c.close()
     return retVal
 
+def changePassword(email, oldPassword, newPassword):
+    c = get_db()
+    cur = c.cursor()
+    cur.execute("SELECT * FROM users WHERE email = (?) AND password = (?)", (email, oldPassword))
+    retVal = cur.fetchall()
+    print(retVal)
+    if (retVal == []):
+        return False
+        c.close()
+    else:
+        cur.execute("UPDATE users SET password = (?) WHERE email = (?) AND password = (?)", (newPassword, email, oldPassword))
+        c.commit()
+        c.close()
+        return True
+
 def close(): 
     get_db().close()
+
+
+#print(changePassword("nicsi918@student.liu.se", "asd", "dsggga"))
 
 #print(getUser("nicsi918@student.liu.se"))
 #print(createUser("nicsi918@student.liu.se","","","","","",""))

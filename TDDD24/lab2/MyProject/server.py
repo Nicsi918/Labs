@@ -74,6 +74,7 @@ def getUserData(email):
     if (dbRet == []):
         return jsonify(success = False, message = "User does not exist")
     else:
+        dbRet[0] = dbRet[0][:1] + dbRet[0][2:]
         return jsonify(success = True, message = "Got user data", data = dbRet[0])
                       
 

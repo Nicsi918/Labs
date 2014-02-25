@@ -45,6 +45,7 @@ def createUser(email, password, firstname, familyname, gender, city, country):
         c.execute("INSERT INTO users (email, password, firstname, familyname, gender, city, country) VALUES (?,?,?,?,?,?,?)",
               (email, password, firstname, familyname, gender, city, country))
         c.commit()
+        c.close()
         return True
     else:
         return False
@@ -54,11 +55,12 @@ def getUser(email):
     cur = c.cursor()
     cur.execute("SELECT * FROM users WHERE email = (?)", (email,))
     retVal = cur.fetchall()
+    c.close()
     return retVal
 
- 
 def close(): 
     get_db().close()
 
-getUser("KLANGKLNAG")
+#print(getUser("nicsi918@student.liu.se"))
+#print(createUser("nicsi918@student.liu.se","","","","","",""))
 

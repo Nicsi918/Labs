@@ -65,9 +65,9 @@ function resetSignupField(id){
 function signIn(){
 	var username = document.getElementById("email").value;
 	var password = document.getElementById("psw").value;
+	
 	var ret = serverstub.signIn(username, password);
-	sessionStorage.token = ret.data;
-	console.log(sessionStorage.token);
+	
 	document.getElementById("signInStatus").innerHTML = ret.message;
 
 	//document.getElementById("login-form").action = "{{ url_for('/add_entry') }}";
@@ -79,6 +79,8 @@ function signIn(){
 		loadHomeWall();
 		loadHomePersonalInfo();
 		sessionStorage.useremail = null;
+		sessionStorage.token = ret.data;
+		console.log(sessionStorage.token);
 	}
 };
 

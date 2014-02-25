@@ -37,28 +37,28 @@ def getMessages(toEmail):
     print(retVal)
     c.commit()
 
+    return retVal
+
 def createUser(email, password, firstname, familyname, gender, city, country):
-    c = get_db()
-    c.execute("INSERT INTO users (email, password, firstname, familyname, gender, city, country) VALUES (?,?,?,?,?,?,?)",
+    if (getUser(email) == []):        
+        c = get_db()
+        c.execute("INSERT INTO users (email, password, firstname, familyname, gender, city, country) VALUES (?,?,?,?,?,?,?)",
               (email, password, firstname, familyname, gender, city, country))
-    c.commit()
+        c.commit()
+        return True
+    else:
+        return False
 
 def getUser(email):
     c = get_db()
     cur = c.cursor()
     cur.execute("SELECT * FROM users WHERE email = (?)", (email,))
     retVal = cur.fetchall()
-
-    print(retVal)
-    c.commit()
+    return retVal
 
  
 def close(): 
-    get_db().close() 
+    get_db().close()
 
+getUser("KLANGKLNAG")
 
-getMessages("toasdsa")
-#createUser("alepu678@student.liu.se", "asd", "Alex", "Puh", "Male", "Linkan", "Sweden")
-#postMessage("from", "to" ,"message")
-getUser("alepu678@student.liu.se")
-close()

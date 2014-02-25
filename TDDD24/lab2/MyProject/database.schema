@@ -1,6 +1,3 @@
 create table users (email text, password text, firstname text, familyname text, gender text, city text, country text); 
 
 create table posts (toEmail text, fromEmail text, message text);
-
-insert into users 
-values ("nicsi918@student.liu.se", "asd", "Nicke", "Sievert", "male", "Linköping", "Sweden");

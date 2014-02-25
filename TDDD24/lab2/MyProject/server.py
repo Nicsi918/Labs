@@ -6,8 +6,6 @@ import hashlib
 import os,binascii
 
 
-storedToken = "UIHEWFISUHF%/&/)((F/Y/&"
-
 loggedInUsers = {}
 
 @app.route('/')
@@ -20,25 +18,25 @@ def hello_world():
 
 @app.route('/getUserMessagesByToken', methods=['GET'])
 def getUserMessagesByToken():
-    email = "nicsi918@student.liu.se" ##mail by token
-    token = storedToken ##token
-    getUserMessages(email)
+    token = request.args.get('token')
+    if (token in loggedInUsers.keys()):
+        email = loggedInUsers[token]
+        return getUserMessages(email)
+    else:
+        return jsonify(success = False, message = "User not logged in")
 
 @app.route('/getUserMessagesByEmail', methods=['GET'])
 def getUserMessagesByEmail():
-    email = "nicsi918@student.liu.se" ##mail by request
-    token = storedToken ##token
-    getUserMessages(email)
-    
-
-def getUserMessages(email):
-    if (token == storedToken): ##
-        dbRet = database_helper.getMessages(email)
-        return jsonify(success = True, message = "Returning messages", data = dbRet)
+    email = request.args.get('email')
+    token = request.args.get('token')
+    if (token in loggedInUsers.keys()):
+        return getUserMessages(email)
     else:
         return jsonify(success = False, message = "User not logged in")
     
-
+def getUserMessages(email):
+    dbRet = database_helper.getMessages(email)
+    return jsonify(success = True, message = "Returning messages", data = dbRet)
 
 @app.route('/postMessage', methods=['POST'])
 def postMessage():

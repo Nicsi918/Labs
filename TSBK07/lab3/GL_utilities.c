@@ -89,6 +89,7 @@ void printProgramInfoLog(GLuint obj, const char *vfn, const char *ffn,
 GLuint compileShaders(const char *vs, const char *fs, const char *gs, const char *tcs, const char *tes,
 								const char *vfn, const char *ffn, const char *gfn, const char *tcfn, const char *tefn)
 {
+
 	GLuint v,f,g,tc,te,p;
 	
 	v = glCreateShader(GL_VERTEX_SHADER);

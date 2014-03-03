@@ -25,7 +25,9 @@ void main(void)
 {	
 	vec3 normalizedNormal = normalize(fragNormal);
 	vec3 v = normalize(-fragPos);
-	out_Color = vec4(0.0, 0.0, 0.0, 0.0);
+	vec3 diffuseLighting = vec3(0,0,0);
+	vec3 specularLighting = vec3(0,0,0);
+
 	
 	for (int i = 0; i < 4; i++)
 	{
@@ -49,8 +51,10 @@ void main(void)
 		}
 		specular = max(specular, 0.0);
 		
-		float shade = 0.7 * diffuse  + 1.0 * specular;
-		//out_Color = out_Color + vec4(shade * lightSourcesColorArr[i], 1.0);
+		diffuseLighting = diffuseLighting + diffuse * lightSourcesColorArr[i];
+		specularLighting = specularLighting + specular * lightSourcesColorArr[i];
 	}
-	out_Color = texture(texUnit1, fragTexCoord);
+	
+	out_Color = vec4(diffuseLighting * vec3(0.2 * texture(texUnit1, fragTexCoord) + 0.8 * texture(texUnit2, fragTexCoord)) + specularLighting, 1.0);
+	
 }

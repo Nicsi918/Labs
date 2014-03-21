@@ -29,8 +29,6 @@ function initSocket(){
 			loadHomeWall();
 			loadBrowse();
 		}
-		//console.log(JSON.parse(event.data).message);
-		//socket.send("Received")
 	}
 
 	socket.onopen = function(event) {

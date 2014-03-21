@@ -12,6 +12,7 @@ loggedInUsers = {}
 loggedInWebSockets = {}
 
 def connect(ws):
+    print "Client connected"
     data = json.loads(ws.receive())
     token = data["token"]
     if not token in loggedInWebSockets:
@@ -43,6 +44,7 @@ def index():
 
 @app.route('/getUserMessagesByToken', methods=['GET'])
 def getUserMessagesByToken():
+    print "Get messages"
     token = request.args.get('token')
     if (token in loggedInUsers.keys()):
         email = loggedInUsers[token]
@@ -52,6 +54,7 @@ def getUserMessagesByToken():
 
 @app.route('/getUserMessagesByEmail', methods=['GET'])
 def getUserMessagesByEmail():
+    print "Get messages"
     email = request.args.get('email')
     token = request.args.get('token')
     if (token in loggedInUsers.keys()):
@@ -65,6 +68,7 @@ def getUserMessages(email):
 
 @app.route('/postMessage', methods=['POST'])
 def postMessage():
+    print "Post message"
     token = request.form['token']
     if (token in loggedInUsers.keys()):
         
@@ -81,6 +85,7 @@ def postMessage():
 
 @app.route('/getUserDataByEmail', methods=['GET'])
 def getUserDataByEmail():
+    print "Get user data"
     email = request.args.get('email')
     token = request.args.get('token')
     if (token in loggedInUsers.keys()):
@@ -88,6 +93,7 @@ def getUserDataByEmail():
 
 @app.route('/getUserDataByToken', methods=['GET'])
 def getUserDataByToken():
+    print "Get user data"
     token = request.args.get('token')
     if (token in loggedInUsers.keys()):
         email = loggedInUsers[token]
@@ -107,6 +113,7 @@ def getUserData(email):
 
 @app.route('/signout', methods=['POST'])
 def signOut():
+    print "Signout"
     token = request.form['token']
     if (token in loggedInUsers.keys()):
         del loggedInUsers[token]
@@ -117,6 +124,7 @@ def signOut():
 
 @app.route('/signup', methods=['POST'])
 def signUp():
+    print "Signup"
     firstname = request.form['firstname']
     familyname = request.form['familyname']
     gender = request.form['gender']
@@ -134,36 +142,32 @@ def signUp():
 
 @app.route('/signin', methods=['POST'])
 def signIn():
+    print "Signin"
     email = request.form['email']
     password = request.form['password']
     user = database_helper.getUser(email)
     
     success = True
     message = "User is logged in"
-
-    print(user)
     
     if not user:
-        print("AWDAWD")
         success = False
         message = "User does not exist"
         return jsonify(message = message, success = success)
     else:
-        print("DERP")
         if (user['password'] == hashlib.sha224(password).hexdigest()):
-            print("asdad")
             token = binascii.b2a_hex(os.urandom(15))
             loggedInUsers[token] = email
             return jsonify(message = message, success = success, token = token)
         else:
             success = False
-            print("lkop")
             message = "Incorrect password"
             return jsonify(message = message, success = success)
 
 
 @app.route('/changePassword', methods=['POST'])
 def changePassword():
+    print "Change password"
     token = request.form['token']
     oldPassword = hashlib.sha224(request.form['oldPassword']).hexdigest()
     newPassword = hashlib.sha224(request.form['newPassword']).hexdigest()
